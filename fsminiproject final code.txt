@@ -1,0 +1,293 @@
+#include<iostream>
+#include<cstring>
+#include<fstream>
+#include<iomanip>
+#include<cstdlib>
+using namespace std;
+
+class broadband{
+	public:string name,address,package,phone,email ,username,pass;
+		   void enter_data();
+		   void display_data(); 
+		   void pack();
+		   void pack2(); 
+		   void unpack();  
+		   void modify();
+		   void pck();
+		   void del(int); 
+		   }s[100],temp;
+		   	   
+fstream fp;
+fstream tmp;
+int count;
+void login(); 
+void show_pck(string);
+void error(int);
+int main(){
+	x:
+	int choice;
+	//system("clear"); // == clrscr();
+	system("color 3f");
+	while(1){
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<"\t\t\t\t           MENU\n";
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<endl;
+	cout<<"\t\t\t\t1.LOGIN\n";
+	cout<<"\t\t\t\t2.REGISTERATION\n";
+	cout<<"\t\t\t\t3.EXIT\n";
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<"\t\t\t\tEnter your choice : ";
+	cin>>choice;
+	switch(choice){
+	case 1:login();
+		   break;
+	case 2:temp.enter_data();
+		   fp.open("in.txt",ios::out|ios::app);
+		   if(!fp)
+  			   error(1);
+		   temp.pack();
+   		   fp.close();
+		   break;
+	case 3:exit(0);
+	default: cout<<"\t\t\t\tNot a valid input\n";
+		}
+	}
+}
+
+void broadband::enter_data(){
+	cout<<"\n\t\t\t\t----------------------------\n";
+	p:
+		int i=0;
+		cout<<"\n\t\t\t\tEnter your username : ";
+		cin>>username;
+		string name=username;
+		fp.open("in.txt",ios::in);
+		if(!fp)
+			error(1);
+	
+		while(fp){
+			s[i].unpack();
+			i++;
+		}
+		fp.close();
+		count = i;
+		for(int i=0;i<count;i++){
+			if(s[i].username==name){
+				cout<<"\n\t\t\t\tThis username is already used.Please choose another username";
+				goto p;
+			}
+		}
+
+	cout<<"\n\t\t\t\tEnter your fullname : ";
+	cin>>name;
+	cout<<"\n\t\t\t\tEnter your address : ";
+	cin>>address;
+	cout<<"\n\t\t\t\tEnter your phone number : ";
+	cin>>phone;
+	cout<<"\n\t\t\t\tEnter your E-mail address : ";
+	cin>>email;
+	cout<<"\n\t\t\t\tEnter your desired package : ";
+	pck();
+	cin>>package;
+	cout<<"\n\t\t\t\tEnter your password :";
+	cin>>pass;
+	cout<<"\n\t\t\t\t----------------------------\n";
+	}
+
+void broadband::pack(){
+	string buf = username + "|" + name + "|" + address + "|" + phone + "|" + email + "|" + package + "|" + pass + "|" ; 
+	fp<<buf<<endl;
+	}
+
+void broadband::pack2(){
+	string buf = username + "|" + name + "|" + address + "|" + phone + "|" + email + "|" + package + "|" + pass + "|" ; 
+	tmp<<buf<<endl;
+}
+	
+void login(){
+	string user,pwd;
+	char x;
+	int i=0, srch_flag=-1, modify_flag=-1,ch;
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<"\n\t\t\t\tEnter the username : ";
+	cin>>user;
+	
+	fp.open("in.txt",ios::in);
+	if(!fp)
+		error(1);
+	
+	while(fp){
+		s[i].unpack();
+		i++;
+	}
+	fp.close();
+	count = i;
+	for(i=0;i<count;i++){
+		if(s[i].username==user){
+			cout<<"\n\t\t\t\tEnter the password :";
+			cin>>pwd;
+			if(s[i].pass==pwd){
+				srch_flag=i;
+				cout<<"\t\t\t\tLogin Successful !!\n";
+				cout<<"\n\t\t\t\t----------------------------\n";
+				break;
+				}
+			}
+		}
+	if(srch_flag==-1){
+		cout<<"\t\t\t\tInvalid Password or Username !!!\n";
+		cout<<"\n\t\t\t\t----------------------------\n";
+		return;
+		}
+	
+	m:
+		cout<<"\t\t\t\t----------------------\n";
+		cout<<"\t\t\t\t       MENU \n";
+		cout<<"\t\t\t\t----------------------\n";
+		cout<<"\t\t\t\t1.Account Information\n";
+		cout<<"\t\t\t\t2.Modify\n";
+		cout<<"\t\t\t\t3.Delete Account\n";
+		cout<<"\t\t\t\t4.Back to main menu\n";
+		cout<<"\n\t\t\t\t----------------------------\n";
+		cout<<"\t\t\t\tEnter your choice : ";
+		cin>>ch;
+		switch(ch){
+			case 1:s[srch_flag].display_data();
+			   break;
+			case 2:modify_flag=1;
+			   if(modify_flag){ 
+			   s[srch_flag].modify();
+			   fp.open("in.txt",ios::out);
+			   if(!fp)
+					error(1);
+			   for(i=0;i<count;i++)
+					s[i].pack();
+			   fp.close();
+				}
+				break;
+			case 3:cout<<"\t\t\t\tAre you sure you want to terminate your connection (y/n)? ";
+				  cin>>x;
+				  if(x=='y'){
+				  	s[srch_flag].del(srch_flag);
+				  	return; 
+				  }
+				  else
+				  	break;
+			case 4:return;
+			default:cout<<"\t\t\t\tInvalid option\n";
+			}
+		goto m;
+	}
+	
+	
+void broadband::unpack(){
+	string seg;
+	getline(fp,username,'|');
+	getline(fp,name,'|');
+	getline(fp,address,'|');
+	getline(fp,phone,'|');
+	getline(fp,email,'|');
+	getline(fp,package,'|');
+	getline(fp,pass,'|');
+	getline(fp,seg);
+	}
+	
+void broadband::display_data(){
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<"\n\t\t\t\tName : "<<name<<"\n\t\t\t\tUsername : "<<username<<"\n\t\t\t\tAddress :"<<address<<"\n\t\t\t\tPhone Number :"<<phone<<"\n\t\t\t\tE-mail :"<<email<<"\n\t\t\t\tSelected Package :";
+	show_pck(package);
+	cout<<"\n\t\t\t\t----------------------------\n";
+	cout<<endl;
+	}
+	
+void broadband::modify(){
+	string p;
+	int choice;
+	while(1){
+		cout<<"\n\t\t\t\tEnter the field to modify:";
+		cout<<"\n\t\t\t\t1.Name \n\t\t\t\t2.Username \n\t\t\t\t3.Address \n\t\t\t\t4.Phone number \n\t\t\t\t5.E-mail \n\t\t\t\t6.Package \n\t\t\t\t7.Password\n\t\t\t\t8.to exit modification";
+		cout<<"\n\t\t\t\t----------------------------\n";
+		cout<<"\t\t\t\tEnter your choice :";
+		cin>>choice;
+		switch(choice){
+			case 1: cout<<"\n\t\t\t\tEnter new name : ";
+					cin>>name;
+					break;
+			case 2: cout<<"\n\t\t\t\tEnter new username : ";
+					cin>>username;
+					break;
+			case 3: cout<<"\n\t\t\t\tEnter new Address : ";
+					cin>>address;
+					break;
+			case 4: cout<<"\n\t\t\t\tEnter new Phone number : ";
+					cin>>phone;
+					break;
+			case 5: cout<<"\n\t\t\t\tEnter new E-mail : ";
+					cin>>email;
+					break;
+			case 6: cout<<"\n\t\t\t\tEnter new Package : ";
+					pck();
+					cin>>package;
+					break;
+			case 7: cout<<"\n\t\t\t\tEnter the current password : ";
+					cin>>p;
+					if(p==pass){
+						cout<<"\n\t\t\t\tEnter the new password : ";
+						cin>>pass;
+					}
+					else{
+						cout<<"\n\t\t\t\tInvalid password\n ";
+						return;
+					}
+					break;
+			default: return;
+			}
+		cout<<"\n\t\t\t\tChanges has been saved !!\n ";
+		}
+	}
+	
+void broadband::del(int srch_flag){
+	cout<<srch_flag;
+	fp.open("in.txt",ios::in);
+	tmp.open("in2.txt",ios::out|ios::app);
+	for(int i=0;i<=count;i++){
+		if(i!=srch_flag)
+			s[i].pack2();
+		else
+			continue;
+	}
+	tmp.close();
+	fp.close();
+	remove("in.txt");
+	rename("in2.txt","in.txt");
+	cout<<"\n\t\t\t\tYour connection is terminated\n";
+	cout<<"\n\t\t\t\t----------------------------\n";
+}	
+
+void error(int error_type){
+	switch(error_type){
+		case 1: cout<<"\n\t\t\t\tFATAL ERROR!: Unable to open the record File\n";
+				exit(0);
+		}
+	}
+	
+void broadband::pck(){
+    cout << "\n\t\t\t\tWhich service would you like ?\n";
+    cout << "\t\t\t\t1.Package A: UNLIMITED DATA||SPEED-@30 Mbps||VALIDITY-30 DAYS||COST:Rs.399 ";
+    cout<< "\n\t\t\t\t2.Package B:UNLIMITED DATA DOWNLOAD||SPEED-Upto 40 Mbps||VALIDITY-65 DAYS||COST:Rs.850";
+    cout << "\n\t\t\t\t3.Package C: UNLIMITED DATA||SPEED-@100 Mbps||VALIDITY-1month||COST:Rs.499";
+    cout<<"\n\t\t\t\t----------------------------\n";
+    cout << "\n\t\t\t\tEnter your choice :";
+	}
+	
+void show_pck(string p){
+    if(p=="1")
+        cout << "Package A:UNLIMITED DATA||SPEED-@30 Mbps||VALIDITY-30 DAYS||COST:Rs.399 "<< endl;
+    else if(p=="2")          
+    	cout << "Package B:UNLIMITED DATA DOWNLOAD||SPEED-Upto 40 Mbps||VALIDITY-65 DAYS||COST:Rs.850"<< endl;
+    else
+        cout << "Package C:UNLIMITED DATA||SPEED-@100 Mbps||VALIDITY-1month||COST:Rs.499"<< endl;
+	}
